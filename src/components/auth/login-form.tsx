@@ -32,22 +32,28 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
   const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   });
 
   const onSubmit = async (data: LoginFormData) => {
+    if (isLoggingIn) return; // Éviter les soumissions multiples
+    
     try {
+      setIsLoggingIn(true);
       setError(null);
       await login(data);
       onSuccess?.();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erreur de connexion');
+    } finally {
+      setIsLoggingIn(false);
     }
   };
 
@@ -135,9 +141,9 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
               <Button
                 type="submit"
                 className="w-full"
-                disabled={isSubmitting}
+                disabled={isLoggingIn}
               >
-                {isSubmitting ? (
+                {isLoggingIn ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Connexion...

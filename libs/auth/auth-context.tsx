@@ -123,8 +123,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
 // Mock login pour le mode démo
 async function mockLogin(credentials: LoginCredentials): Promise<User> {
-  // Simuler un délai réseau
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  // Délai minimal pour simuler un traitement réseau
+  await new Promise(resolve => setTimeout(resolve, 100));
 
   // Utilisateurs de démonstration
   const mockUsers: Record<string, User> = {
